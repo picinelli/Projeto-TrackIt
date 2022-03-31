@@ -3,6 +3,10 @@
   text-decoration: none;
 }
 
+body {
+  background-color: #f2f2f2;
+}
+
 .opacidade {
   opacity: 60%;
 }

@@ -2,17 +2,16 @@ import styled from "styled-components";
 import { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import TokenContext from "../../contexts/TokenContext";
+import HabitosRecebidosContext from "../../contexts/HabitosRecebidosContext";
 
 import Input from "./Input";
-import HabitoRecebido from "./HabitoRecebido";
-import Lixeira from "../../assets/images/Lixeira.svg";
+import CarregarHabitos from "./CarregarHabitos"
 
 export default function TelaHabitos() {
   const [visivel, setVisivel] = useState(true);
   const [habito, setHabito] = useState({ name: "", days: [] });
-  const [habitosRecebidos, setHabitosRecebidos] = useState([]);
-  const [recarregar, setRecarregar] = useState(false);
   const { token } = useContext(TokenContext);
+  const {setHabitosRecebidos} = useContext(HabitosRecebidosContext);
 
   let primeiroRender = useRef(true);
 
@@ -25,7 +24,6 @@ export default function TelaHabitos() {
     if (primeiroRender.current) {
       primeiroRender.current = false;
     } else {
-      console.log("cheguei aqui");
       const promise = axios.get(
         "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
         config
@@ -34,7 +32,7 @@ export default function TelaHabitos() {
         setHabitosRecebidos(response.data);
       });
     }
-  }, [token.token]);
+  }, [token.token, setHabitosRecebidos]);
 
   return (
     <Container>
@@ -51,110 +49,15 @@ export default function TelaHabitos() {
           setVisivel={setVisivel}
           setHabito={setHabito}
           habito={habito}
-          setHabitosRecebidos={setHabitosRecebidos}
         />
       </Criar>
 
       <Descricao>
-        <CarregarHabitos />
+        <CarregarHabitos setHabito={setHabito} />
       </Descricao>
     </Container>
   );
-
-  function CarregarHabitos() {
-    if (habitosRecebidos.length < 1) {
-      return (
-        <p>
-          Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para
-          começar a trackear!
-        </p>
-      );
-    }
-    return (
-      <>
-        {habitosRecebidos.map((habito) => {
-          return (
-            <ContainerRecebido key={habito.id + habito.name}>
-              <img
-                src={Lixeira}
-                alt={Lixeira}
-                onClick={() => {
-                  removerHabito(habito);
-                }}
-              ></img>
-              <HabitoRecebido habito={habito} />
-            </ContainerRecebido>
-          );
-        })}
-      </>
-    );
-  }
-
-  function removerHabito(habito) {
-    console.log(habito);
-    //Muito cuidado com escopo dessa funcao
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token.token}`,
-      },
-    };
-    const temCerteza = window.confirm("Você tem certeza?");
-
-    if (temCerteza === false) return <></>;
-    if (temCerteza === true) {
-      axios
-        .delete(
-          `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habito.id}`,
-          config
-        )
-        .then(
-          axios
-            .get(
-              "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
-              config
-            )
-            .then((response) => {
-              setHabito({ name: "", days: [] });
-              setHabitosRecebidos(response.data);
-              setRecarregar(!recarregar);
-            })
-            .catch((err) => {
-              alert("Ops, parece que algo deu errado!");
-            })
-        ).catch(err => {console.log(err.response)})
-    }
-  }
 }
-
-const ContainerRecebido = styled.div`
-  width: 100%;
-  background: #ffffff;
-  border-radius: 5px;
-  padding: 15px 20px;
-  word-wrap: break-word;
-  margin-bottom: 10px;
-  position: relative;
-
-  img {
-    position: absolute;
-    right: 5px;
-    top: 5px;
-  }
-
-  button {
-    width: 30px;
-    height: 30px;
-    background: #ffffff;
-    border: 1px solid #d5d5d5;
-    border-radius: 5px;
-    font-family: "Lexend Deca";
-    font-size: 20px;
-    color: #dbdbdb;
-    margin-right: 3px;
-    margin-top: 8px;
-    padding-bottom: 2px;
-  }
-`;
 
 const Container = styled.div`
   display: flex;

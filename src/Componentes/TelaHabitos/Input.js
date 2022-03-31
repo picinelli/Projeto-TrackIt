@@ -2,12 +2,14 @@ import { ThreeDots } from "react-loader-spinner";
 import { useState, useContext } from "react";
 import styled from "styled-components";
 import TokenContext from "../../contexts/TokenContext";
+import HabitosRecebidosContext from "../../contexts/HabitosRecebidosContext";
 import axios from "axios";
 
 import "../../assets/css/style.css";
 
 export default function Input(props) {
-  const { visivel, setVisivel, setHabito, habito, setHabitosRecebidos } = props;
+  const { visivel, setVisivel, setHabito, habito } = props;
+  const {setHabitosRecebidos} = useContext(HabitosRecebidosContext);
   const [clicado, setClicado] = useState(false);
   const { token } = useContext(TokenContext);
   const [loading, setLoading] = useState(false);

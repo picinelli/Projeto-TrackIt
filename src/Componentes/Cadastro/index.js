@@ -102,9 +102,10 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   max-width: 100vw;
   width: 100%;
+  height: 100vh;
+  background: #FFFFFF;
 
   img {
     margin-top: 100px;
