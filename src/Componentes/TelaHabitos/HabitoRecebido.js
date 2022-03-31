@@ -1,7 +1,6 @@
 export default function HabitoRecebido(props) {
   const {habito} = props;
   
-  console.log(habito.days.includes(0))
   return (
     <>
     <h1>{habito.name}</h1>

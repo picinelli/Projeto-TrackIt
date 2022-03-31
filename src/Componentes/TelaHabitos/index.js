@@ -1,35 +1,40 @@
 import styled from "styled-components";
 import { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
-import TokenContext from "../../contexts/TokenContext"
+import TokenContext from "../../contexts/TokenContext";
 
-import Input from "./Input"
-import HabitoRecebido from "./HabitoRecebido"
+import Input from "./Input";
+import HabitoRecebido from "./HabitoRecebido";
+import Lixeira from "../../assets/images/Lixeira.svg";
 
 export default function TelaHabitos() {
   const [visivel, setVisivel] = useState(true);
-  const [habito, setHabito] = useState({name: "", days: []})
-  const [habitosRecebidos, setHabitosRecebidos] = useState([])
-  const {token} = useContext(TokenContext)
+  const [habito, setHabito] = useState({ name: "", days: [] });
+  const [habitosRecebidos, setHabitosRecebidos] = useState([]);
+  const [recarregar, setRecarregar] = useState(false);
+  const { token } = useContext(TokenContext);
 
-  let primeiroRender = useRef(true)
+  let primeiroRender = useRef(true);
 
   useEffect(() => {
     const config = {
       headers: {
-        Authorization: `Bearer ${token.token}`
-      }
-    }
-    if(primeiroRender.current){
+        Authorization: `Bearer ${token.token}`,
+      },
+    };
+    if (primeiroRender.current) {
       primeiroRender.current = false;
     } else {
-      console.log("cheguei aqui")
-      const promise = axios.get('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits', config)
+      console.log("cheguei aqui");
+      const promise = axios.get(
+        "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
+        config
+      );
       promise.then((response) => {
-      setHabitosRecebidos(response.data)
-      })
+        setHabitosRecebidos(response.data);
+      });
     }
-  },[token.token])
+  }, [token.token]);
 
   return (
     <Container>
@@ -41,7 +46,13 @@ export default function TelaHabitos() {
       </Titulo>
 
       <Criar>
-        <Input visivel={visivel} setVisivel={setVisivel} setHabito={setHabito} habito={habito} setHabitosRecebidos={setHabitosRecebidos} />
+        <Input
+          visivel={visivel}
+          setVisivel={setVisivel}
+          setHabito={setHabito}
+          habito={habito}
+          setHabitosRecebidos={setHabitosRecebidos}
+        />
       </Criar>
 
       <Descricao>
@@ -51,37 +62,84 @@ export default function TelaHabitos() {
   );
 
   function CarregarHabitos() {
-    if(habitosRecebidos.length < 1) {
+    if (habitosRecebidos.length < 1) {
       return (
         <p>
-        Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para
-        começar a trackear!
+          Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para
+          começar a trackear!
         </p>
-      )
+      );
     }
     return (
-        <>
+      <>
         {habitosRecebidos.map((habito) => {
-          console.log(habito)
           return (
-            <ContainerRecebido>
-              <HabitoRecebido key={habito.id + habito.name} habito={habito} />
+            <ContainerRecebido key={habito.id + habito.name}>
+              <img
+                src={Lixeira}
+                alt={Lixeira}
+                onClick={() => {
+                  removerHabito(habito);
+                }}
+              ></img>
+              <HabitoRecebido habito={habito} />
             </ContainerRecebido>
-          )
+          );
         })}
-        </>
-    )
+      </>
+    );
+  }
+
+  function removerHabito(habito) {
+    console.log(habito);
+    //Muito cuidado com escopo dessa funcao
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token.token}`,
+      },
+    };
+    const temCerteza = window.confirm("Você tem certeza?");
+
+    if (temCerteza === false) return <></>;
+    if (temCerteza === true) {
+      axios
+        .delete(
+          `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habito.id}`,
+          config
+        )
+        .then(
+          axios
+            .get(
+              "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
+              config
+            )
+            .then((response) => {
+              setHabito({ name: "", days: [] });
+              setHabitosRecebidos(response.data);
+              setRecarregar(!recarregar);
+            })
+            .catch((err) => {
+              alert("Ops, parece que algo deu errado!");
+            })
+        ).catch(err => {console.log(err.response)})
+    }
   }
 }
 
-
 const ContainerRecebido = styled.div`
   width: 100%;
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 5px;
   padding: 15px 20px;
   word-wrap: break-word;
   margin-bottom: 10px;
+  position: relative;
+
+  img {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+  }
 
   button {
     width: 30px;
@@ -96,7 +154,7 @@ const ContainerRecebido = styled.div`
     margin-top: 8px;
     padding-bottom: 2px;
   }
-`
+`;
 
 const Container = styled.div`
   display: flex;
@@ -104,13 +162,14 @@ const Container = styled.div`
   align-items: center;
   max-width: 100vw;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   padding-top: 100px;
-  background-color: #F2F2F2;
+  background-color: #f2f2f2;
+  overflow: auto;
 
   .clicado {
-    background-color: #CFCFCF;
-    color: #FFFFFF;
+    background-color: #cfcfcf;
+    color: #ffffff;
   }
 `;
 
@@ -198,4 +257,3 @@ const Criar = styled.div`
     padding-bottom: 2px;
   }
 `;
-

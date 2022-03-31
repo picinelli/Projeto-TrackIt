@@ -21,12 +21,12 @@ export default function Input(props) {
 
   return (
     <Container>
-      {console.log(habito)}
       <input
         type="text"
         placeholder="nome do hábito"
         value={habito.name}
         onChange={(e) => setHabito({ ...habito, name: e.target.value })}
+        disabled={loading}
         required
       ></input>
       <div>
@@ -88,7 +88,7 @@ export default function Input(props) {
         </button>
       </div>
       <Salvar>
-        <p onClick={() => {setVisivel(!visivel)}}>Cancelar</p>
+        <p disabled={loading} onClick={() => {setVisivel(!visivel)}}>Cancelar</p>
         <Botao />
       </Salvar>
     </Container>
@@ -111,6 +111,7 @@ export default function Input(props) {
 
   function salvar() {
     setLoading(true);
+    //Envia o habito para a API
     const promise = axios.post(
       "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
       habito,
@@ -122,6 +123,7 @@ export default function Input(props) {
           "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
           config
         )
+        //Recarrega a lista de habitos caso o habito seja enviado com sucesso
         .then((response) => {
           setHabito({name: "", days: []})
           setVisivel(!visivel)
@@ -130,9 +132,15 @@ export default function Input(props) {
         })
         .catch((err) =>{
           setLoading(false);
-          alert('Ops, parece que algo deu errado!')
+          alert(`Ops, parece que algo deu errado!`)
+          console.log(err.response)
         })
-    });
+    })
+    //Retorna alert caso o post falhe
+    promise.catch((err) => {
+      setLoading(false);
+      alert(`Ops, parece que algo deu errado!`)
+    })
   }
 
   function verificarClicado(e) {

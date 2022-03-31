@@ -34,6 +34,7 @@ const Container = styled.div`
   align-items: center;
   padding: 0px 18px 0px 18px;
   position: fixed;
+  z-index: 3;
 
   h1 {
     font-family: "Playball";
