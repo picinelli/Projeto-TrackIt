@@ -1,35 +1,102 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
+import axios from "axios";
+import TokenContext from "../../contexts/TokenContext"
 
 import Input from "./Input"
+import HabitoRecebido from "./HabitoRecebido"
 
 export default function TelaHabitos() {
   const [visivel, setVisivel] = useState(true);
   const [habito, setHabito] = useState({name: "", days: []})
-  console.log(habito)
+  const [habitosRecebidos, setHabitosRecebidos] = useState([])
+  const {token} = useContext(TokenContext)
+
+  let primeiroRender = useRef(true)
+
+  useEffect(() => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token.token}`
+      }
+    }
+    if(primeiroRender.current){
+      primeiroRender.current = false;
+    } else {
+      console.log("cheguei aqui")
+      const promise = axios.get('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits', config)
+      promise.then((response) => {
+      setHabitosRecebidos(response.data)
+      })
+    }
+  },[token.token])
 
   return (
     <Container>
       <Titulo>
         <h1>Meus hábitos</h1>
-        <div>
-          <p onClick={() => setVisivel(!visivel)}>+</p>
+        <div onClick={() => setVisivel(!visivel)}>
+          <p>+</p>
         </div>
       </Titulo>
 
       <Criar>
-        <Input visivel={visivel} setHabito={setHabito} habito={habito} />
+        <Input visivel={visivel} setVisivel={setVisivel} setHabito={setHabito} habito={habito} setHabitosRecebidos={setHabitosRecebidos} />
       </Criar>
 
       <Descricao>
-        <p>
-          Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para
-          começar a trackear!
-        </p>
+        <CarregarHabitos />
       </Descricao>
     </Container>
   );
+
+  function CarregarHabitos() {
+    if(habitosRecebidos.length < 1) {
+      return (
+        <p>
+        Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para
+        começar a trackear!
+        </p>
+      )
+    }
+    return (
+        <>
+        {habitosRecebidos.map((habito) => {
+          console.log(habito)
+          return (
+            <ContainerRecebido>
+              <HabitoRecebido key={habito.id + habito.name} habito={habito} />
+            </ContainerRecebido>
+          )
+        })}
+        </>
+    )
+  }
 }
+
+
+const ContainerRecebido = styled.div`
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 5px;
+  padding: 15px 20px;
+  word-wrap: break-word;
+  margin-bottom: 10px;
+
+  button {
+    width: 30px;
+    height: 30px;
+    background: #ffffff;
+    border: 1px solid #d5d5d5;
+    border-radius: 5px;
+    font-family: "Lexend Deca";
+    font-size: 20px;
+    color: #dbdbdb;
+    margin-right: 3px;
+    margin-top: 8px;
+    padding-bottom: 2px;
+  }
+`
 
 const Container = styled.div`
   display: flex;
@@ -39,7 +106,12 @@ const Container = styled.div`
   width: 100%;
   height: 100vh;
   padding-top: 100px;
-  background-color: wheat;
+  background-color: #F2F2F2;
+
+  .clicado {
+    background-color: #CFCFCF;
+    color: #FFFFFF;
+  }
 `;
 
 const Titulo = styled.div`
@@ -50,7 +122,7 @@ const Titulo = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 35px;
+  margin-bottom: 15px;
 
   h1 {
     font-size: 22.976px;
@@ -88,7 +160,7 @@ const Criar = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 310px;
+  max-width: 350px;
   width: 100%;
 
   input {
@@ -111,11 +183,6 @@ const Criar = styled.div`
   div {
     width: 100%;
     display: flex;
-  }
-
-  .clicado {
-  background-color: #CFCFCF;
-  color: #FFFFFF;
   }
 
   div button {

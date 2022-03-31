@@ -32,6 +32,7 @@ export default function Login() {
     promise.catch((err) => {
       setLoading(false)
       console.log(err.response)
+      alert('Parece que algo deu errado, Tente novamente!')
     })
   }
 
