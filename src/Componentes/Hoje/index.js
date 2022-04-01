@@ -1,90 +1,98 @@
+import { useContext, useEffect, useRef } from "react";
 import styled from "styled-components";
+import dayjs from "dayjs";
+import "../../../node_modules/dayjs/locale/pt-br";
+import HabitosHoje from "../../contexts/HabitosHoje";
+import TokenContext from "../../contexts/TokenContext";
+import axios from "axios";
+
+import CarregarHabitoHoje from "./CarregarHabitoHoje"
 
 export default function Hoje() {
-  return(
+  const { habitosHoje, setHabitosHoje } = useContext(HabitosHoje);
+  const { token } = useContext(TokenContext);
+
+  let primeiroRender = useRef(true);
+
+  console.log(habitosHoje)
+  useEffect(() => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token.token}`,
+      },
+    };
+    if (primeiroRender.current) {
+      primeiroRender.current = false;
+    } else {
+      const promise = axios.get(
+        "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
+        config
+      );
+      promise.then((response) => {
+        setHabitosHoje(response.data);
+      });
+      promise.catch((err) => {
+        console.log(err.response);
+      });
+    }
+  }, [token.token, setHabitosHoje]);
+
+  return (
     <>
-    <Fundo>
-      <Container>
-        <Data>Segunda, 17/05</Data>
-        <ProgressoTexto>Nenhum hábito concluído ainda</ProgressoTexto>
-        <ContainerHabito>
-          <h1>Ler 1 capítulo de livraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaao</h1>
-          <p>Sequência atual: 3 dias</p>
-          <p>Seu recorde: 5 dias</p>
-          <ion-icon name="checkbox"></ion-icon>
-        </ContainerHabito>
-        <ContainerHabito>
-          <h1>Ler 1 capítulo de livraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaao</h1>
-          <p>Sequência atual: 3 dias</p>
-          <p>Seu recorde: 5 dias</p>
-          <ion-icon name="checkbox"></ion-icon>
-        </ContainerHabito>
-        <ContainerHabito>
-          <h1>Ler 1 capítulo de livraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaao</h1>
-          <p>Sequência atual: 3 dias</p>
-          <p>Seu recorde: 5 dias</p>
-          <ion-icon name="checkbox"></ion-icon>
-        </ContainerHabito>
-      </Container>
-    </Fundo>
+      <Fundo>
+        <Container>
+          <Data>
+            {dayjs().locale("pt-br").format("dddd")},{" "}
+            {dayjs().locale("pt-br").format("DD/MM")}
+          </Data>
+          <ProgressoTexto>Nenhum hábito concluído ainda</ProgressoTexto>
+          {habitosHoje.map((habito) => {
+            return (
+              <CarregarHabitoHoje key={habito.id} habito={habito} />
+            )
+          })}
+        </Container>
+      </Fundo>
     </>
-  )
+  );
 }
 
 const Fundo = styled.main`
-  background-color: #F2F2F2;
+  background-color: #f2f2f2;
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
-`
+
+  .verdinho {
+    color: #8FC549;
+  }
+
+  .marcado {
+    background-color: #8FC549;
+  }
+
+  .desmarcado {
+    background-color: #EBEBEB;
+  }
+`;
 
 const ProgressoTexto = styled.p`
   margin-top: 10px;
-  font-family: 'Lexend Deca';
+  font-family: "Lexend Deca";
   font-size: 18px;
-  color: #BABABA;
+  color: #bababa;
   margin-bottom: 30px;
-`
+`;
 
 const Container = styled.div`
   max-width: 340px;
   width: 100%;
-`
+`;
 
 const Data = styled.div`
   padding-top: 110px;
-  font-family: 'Lexend Deca';
+  font-family: "Lexend Deca";
   font-size: 23px;
-  color: #126BA5;
-`
-
-const ContainerHabito = styled.div`
-  padding: 15px 88px 15px 15px;
-  margin-bottom: 15px;
-  max-width: 340px;
-  width: 100%;
-  background: #FFFFFF;
-  border-radius: 5px;
-  font-family: 'Lexend Deca';
-  font-size: 20px;
-  color: #666666;
-  position: relative;
-
-  h1 {
-    margin-bottom: 5px;
-    word-break: break-all;
-  }
-
-  p {
-    font-size: 13px;
-  }
-
-  ion-icon {
-    color: #8FC549;
-    font-size: 85px;
-    position: absolute;
-    right: 5px;
-    top: 5px;
-  }
-`
+  color: #126ba5;
+`;

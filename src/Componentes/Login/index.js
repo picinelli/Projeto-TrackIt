@@ -25,7 +25,7 @@ export default function Login() {
     );
     promise.then((response) => {
       setLoading(false)
-      navigate('/habitos')
+      navigate('/hoje')
       setToken(response.data)
       console.log(token)
     });
