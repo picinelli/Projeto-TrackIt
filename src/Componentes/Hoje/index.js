@@ -4,11 +4,13 @@ import dayjs from "dayjs";
 import "../../../node_modules/dayjs/locale/pt-br";
 import HabitosHoje from "../../contexts/HabitosHoje";
 import TokenContext from "../../contexts/TokenContext";
+import HabitosRecebidosContext from "../../contexts/HabitosRecebidosContext"
 import axios from "axios";
 
 import CarregarHabitoHoje from "./CarregarHabitoHoje"
 
 export default function Hoje() {
+  const {setHabitosRecebidos} = useContext(HabitosRecebidosContext);
   const { habitosHoje, setHabitosHoje } = useContext(HabitosHoje);
   const { token } = useContext(TokenContext);
   let habitosCompletos = 0
@@ -40,6 +42,14 @@ export default function Hoje() {
       });
       promise.catch((err) => {
         console.log(err.response);
+      });
+
+      const promiseHistorico = axios.get(
+        "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
+        config
+      );
+      promiseHistorico.then((response) => {
+        setHabitosRecebidos(response.data);
       });
     }
   }, [token.token, setHabitosHoje]);

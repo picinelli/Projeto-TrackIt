@@ -92,6 +92,7 @@ const Titulo = styled.div`
   }
 
   div {
+    cursor: pointer;
     width: 40px;
     height: 100%;
     background: #52b6ff;

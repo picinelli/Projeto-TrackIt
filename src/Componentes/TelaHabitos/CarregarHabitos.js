@@ -87,6 +87,7 @@ const ContainerRecebido = styled.div`
   position: relative;
 
   img {
+    cursor: pointer;
     position: absolute;
     right: 5px;
     top: 5px;

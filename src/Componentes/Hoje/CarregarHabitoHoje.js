@@ -90,16 +90,10 @@ const ContainerHabito = styled.div`
     font-size: 13px;
     color: #666666;
   }
-
-  ion-icon {
-    font-size: 85px;
-    position: absolute;
-    right: 5px;
-    top: 0;
-  }
 `;
 
 const ContainerIcone = styled.div`
+  cursor: pointer;
   width: 70px;
   height: 70px;
   border-radius: 10px;

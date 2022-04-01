@@ -167,6 +167,10 @@ const Container = styled.main`
   background: #ffffff;
   border-radius: 5px;
   padding: 20px 20px 20px 20px;
+
+  button {
+    cursor: pointer;
+  }
 `;
 
 const Salvar = styled.div`
@@ -179,6 +183,7 @@ const Salvar = styled.div`
   margin-top: 35px;
 
   aside {
+    cursor: pointer;
     width: 84px;
     height: 100%;
     background-color: #52b6ff;
@@ -192,6 +197,7 @@ const Salvar = styled.div`
     margin-left: 25px;
 
     p {
+      cursor: pointer;
       color: #ffffff;
     }
   }
