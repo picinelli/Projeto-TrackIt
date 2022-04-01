@@ -11,6 +11,13 @@ import CarregarHabitoHoje from "./CarregarHabitoHoje"
 export default function Hoje() {
   const { habitosHoje, setHabitosHoje } = useContext(HabitosHoje);
   const { token } = useContext(TokenContext);
+  let habitosCompletos = 0
+  for(let i = 0; i < habitosHoje.length; i++) {
+    if(habitosHoje[i].done === true) {
+      habitosCompletos++
+    }
+  }
+  const porcentagem = habitosCompletos / habitosHoje.length;
 
   let primeiroRender = useRef(true);
 
@@ -45,7 +52,9 @@ export default function Hoje() {
             {dayjs().locale("pt-br").format("dddd")},{" "}
             {dayjs().locale("pt-br").format("DD/MM")}
           </Data>
-          <ProgressoTexto>Nenhum hábito concluído ainda</ProgressoTexto>
+          <ProgressoTexto>
+            <HabitoTexto />
+          </ProgressoTexto>
           {habitosHoje.map((habito) => {
             return (
               <CarregarHabitoHoje key={habito.id} habito={habito} />
@@ -55,6 +64,13 @@ export default function Hoje() {
       </Fundo>
     </>
   );
+
+  function HabitoTexto() {
+    if (habitosCompletos < 1) {
+      return <p className="">Nenhum hábito concluído ainda</p>
+    }
+    return <p className="verdinho">{`${(porcentagem * 100).toFixed(0)}% dos hábitos concluídos`}</p>
+  }
 }
 
 const Fundo = styled.main`
@@ -77,7 +93,7 @@ const Fundo = styled.main`
   }
 `;
 
-const ProgressoTexto = styled.p`
+const ProgressoTexto = styled.h2`
   margin-top: 10px;
   font-family: "Lexend Deca";
   font-size: 18px;

@@ -30,23 +30,43 @@ export default function CarregarHabitoHoje(props) {
 
   function cumprirHabito(habito, token) {
 
-    const promiseCumprir = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habito.id}/check`,{}, config)
-    promiseCumprir.then(() => {
-      console.log('aeee')
-      const promiseListarHabitos = axios.get(
-        "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
-        config
-      );
-      promiseListarHabitos.then((response) => {
-        setHabitosHoje(response.data);
-      });
-      promiseListarHabitos.catch((err) => {
-        console.log(err.response);
-      });
+    // se o habito nao estiver marcado, enviar como marcado para API e recarregar lista de habitos
+    if(habito.done === false) {
+      const promiseCumprir = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habito.id}/check`,{}, config)
+      promiseCumprir.then(() => {
+        const promiseListarHabitos = axios.get(
+          "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
+          config
+        );
+        promiseListarHabitos.then((response) => {
+          setHabitosHoje(response.data);
+        });
+        promiseListarHabitos.catch((err) => {
+          console.log(err.response);
+        });
+      }
+      )
+      promiseCumprir.catch(err => console.log(err.response))
     }
-    )
-    promiseCumprir.catch(err => console.log(err.response))
-  }
+    // se o habito estiver marcado, enviar como desmarcado para API e recarregar lista de habitos
+    else {
+      const promiseCumprir = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habito.id}/uncheck`,{}, config)
+      promiseCumprir.then(() => {
+        const promiseListarHabitos = axios.get(
+          "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
+          config
+        );
+        promiseListarHabitos.then((response) => {
+          setHabitosHoje(response.data);
+        });
+        promiseListarHabitos.catch((err) => {
+          console.log(err.response);
+        });
+      }
+      )
+      promiseCumprir.catch(err => console.log(err.response))
+    }
+    }
 }
 
 const ContainerHabito = styled.div`
