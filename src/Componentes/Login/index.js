@@ -13,7 +13,10 @@ export default function Login() {
   const {token, setToken} = useContext(TokenContext)
   const navigate = useNavigate()
 
-  // if(token !== null) navigate('/habitos')
+
+    if(token) {
+      navigate('/hoje')
+    }
 
   function atualizarInfoLogin(e) {
     e.preventDefault();
@@ -24,6 +27,7 @@ export default function Login() {
       infoLogin
     );
     promise.then((response) => {
+      localStorage.setItem('infoUsuario', JSON.stringify(response.data));
       setLoading(false)
       navigate('/hoje')
       setToken(response.data)

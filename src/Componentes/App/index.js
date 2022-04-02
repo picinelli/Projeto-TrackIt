@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import "../../assets/css/reset.css";
 import "../../assets/css/style.css";
@@ -18,6 +18,16 @@ export default function App() {
   const [token, setToken] = useState("");
   const [habitosRecebidos, setHabitosRecebidos] = useState([]);
   const [habitosHoje, setHabitosHoje] = useState([])
+
+
+  useEffect(() => {
+    const tokenStorageSerializado = localStorage.getItem('infoUsuario')
+    const tokenStorage = JSON.parse(tokenStorageSerializado)
+
+    if(tokenStorage) {
+      setToken(tokenStorage)
+    }
+  }, [])
 
   return (
     <>

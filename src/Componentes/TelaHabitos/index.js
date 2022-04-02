@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import TokenContext from "../../contexts/TokenContext";
 import HabitosRecebidosContext from "../../contexts/HabitosRecebidosContext";
+import HabitosHoje from "../../contexts/HabitosHoje";
 
 import Input from "./Input";
 import CarregarHabitos from "./CarregarHabitos"
@@ -12,9 +13,11 @@ export default function TelaHabitos() {
   const [habito, setHabito] = useState({ name: "", days: [] });
   const { token } = useContext(TokenContext);
   const {setHabitosRecebidos} = useContext(HabitosRecebidosContext);
+  const {setHabitosHoje} = useContext(HabitosHoje)
 
   let primeiroRender = useRef(true);
 
+  //Listar todos os habitos
   useEffect(() => {
     const config = {
       headers: {
@@ -33,6 +36,27 @@ export default function TelaHabitos() {
       });
     }
   }, [token.token, setHabitosRecebidos]);
+
+  //Atualizar o Footer ao dar f5 na pagina (Está dando erro de token, mas está atualizando)
+  useEffect(() => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token.token}`,
+      },
+    };
+    const promiseListarHabitos = axios.get(
+      "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
+      config
+    );
+    promiseListarHabitos.then((response) => {
+      setHabitosHoje(response.data);
+    });
+    
+    //Devolve erro caso nao consiga atualizar os habitos do dia
+    promiseListarHabitos.catch((err) => {
+      console.log(err.response);
+    });
+  }, [setHabitosHoje, token.token])
 
   return (
     <Container>

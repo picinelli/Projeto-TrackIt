@@ -1,58 +1,51 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect } from "react";
 import styled from "styled-components";
 import dayjs from "dayjs";
 import "../../../node_modules/dayjs/locale/pt-br";
 import HabitosHoje from "../../contexts/HabitosHoje";
 import TokenContext from "../../contexts/TokenContext";
-import HabitosRecebidosContext from "../../contexts/HabitosRecebidosContext"
+import HabitosRecebidosContext from "../../contexts/HabitosRecebidosContext";
 import axios from "axios";
 
-import CarregarHabitoHoje from "./CarregarHabitoHoje"
+import CarregarHabitoHoje from "./CarregarHabitoHoje";
 
 export default function Hoje() {
-  const {setHabitosRecebidos} = useContext(HabitosRecebidosContext);
+  const { setHabitosRecebidos } = useContext(HabitosRecebidosContext);
   const { habitosHoje, setHabitosHoje } = useContext(HabitosHoje);
   const { token } = useContext(TokenContext);
-  let habitosCompletos = 0
-  for(let i = 0; i < habitosHoje.length; i++) {
-    if(habitosHoje[i].done === true) {
-      habitosCompletos++
+  let habitosCompletos = 0;
+  for (let i = 0; i < habitosHoje.length; i++) {
+    if (habitosHoje[i].done === true) {
+      habitosCompletos++;
     }
   }
   const porcentagem = habitosCompletos / habitosHoje.length;
 
-  let primeiroRender = useRef(true);
-
-  console.log(habitosHoje)
   useEffect(() => {
     const config = {
       headers: {
         Authorization: `Bearer ${token.token}`,
       },
     };
-    if (primeiroRender.current) {
-      primeiroRender.current = false;
-    } else {
-      const promise = axios.get(
-        "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
-        config
-      );
-      promise.then((response) => {
-        setHabitosHoje(response.data);
-      });
-      promise.catch((err) => {
-        console.log(err.response);
-      });
+    const promise = axios.get(
+      "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
+      config
+    );
+    promise.then((response) => {
+      setHabitosHoje(response.data);
+    });
+    promise.catch((err) => {
+      console.log(err.response);
+    });
 
-      const promiseHistorico = axios.get(
-        "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
-        config
-      );
-      promiseHistorico.then((response) => {
-        setHabitosRecebidos(response.data);
-      });
-    }
-  }, [token.token, setHabitosHoje]);
+    const promiseHistorico = axios.get(
+      "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
+      config
+    );
+    promiseHistorico.then((response) => {
+      setHabitosRecebidos(response.data);
+    });
+  }, [token.token, setHabitosHoje, setHabitosRecebidos]);
 
   return (
     <>
@@ -66,9 +59,7 @@ export default function Hoje() {
             <HabitoTexto />
           </ProgressoTexto>
           {habitosHoje.map((habito) => {
-            return (
-              <CarregarHabitoHoje key={habito.id} habito={habito} />
-            )
+            return <CarregarHabitoHoje key={habito.id} habito={habito} />;
           })}
         </Container>
       </Fundo>
@@ -77,9 +68,13 @@ export default function Hoje() {
 
   function HabitoTexto() {
     if (habitosCompletos < 1) {
-      return <p className="">Nenhum hábito concluído ainda</p>
+      return <p className="">Nenhum hábito concluído ainda</p>;
     }
-    return <p className="verdinho">{`${(porcentagem * 100).toFixed(0)}% dos hábitos concluídos`}</p>
+    return (
+      <p className="verdinho">{`${(porcentagem * 100).toFixed(
+        0
+      )}% dos hábitos concluídos`}</p>
+    );
   }
 }
 
@@ -91,15 +86,15 @@ const Fundo = styled.main`
   justify-content: center;
 
   .verdinho {
-    color: #8FC549;
+    color: #8fc549;
   }
 
   .marcado {
-    background-color: #8FC549;
+    background-color: #8fc549;
   }
 
   .desmarcado {
-    background-color: #EBEBEB;
+    background-color: #ebebeb;
   }
 `;
 

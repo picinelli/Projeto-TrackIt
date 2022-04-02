@@ -6,8 +6,6 @@ export default function Header() {
   const { token } = useContext(TokenContext);
   const { image } = token;
 
-  console.log(token);
-
   if (
     window.location.pathname === "/" ||
     window.location.pathname === "/cadastro"

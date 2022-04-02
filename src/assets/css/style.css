@@ -8,7 +8,7 @@ body {
 }
 
 .opacidade {
-  background-color: rgba(0,0,0,.5);
+  opacity: 0.5;
 }
 /*
 font-family: 'Lexend Deca', sans-serif;
