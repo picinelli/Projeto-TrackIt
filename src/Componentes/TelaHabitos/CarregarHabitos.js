@@ -6,11 +6,13 @@ import HabitoRecebido from "./HabitoRecebido";
 import Lixeira from "../../assets/images/Lixeira.svg";
 import TokenContext from "../../contexts/TokenContext";
 import HabitosRecebidosContext from "../../contexts/HabitosRecebidosContext";
+import HabitosHoje from '../../contexts/HabitosHoje'
 
 export default function CarregarHabitos(props) {
   const { setHabito } = props;
   const { token } = useContext(TokenContext);
   const {habitosRecebidos, setHabitosRecebidos} = useContext(HabitosRecebidosContext);
+  const {setHabitosHoje} = useContext(HabitosHoje)
 
   if (habitosRecebidos.length < 1) {
     return (
@@ -64,6 +66,18 @@ export default function CarregarHabitos(props) {
         promiseAtualiza.then((response) => {
           setHabito({ name: "", days: [] });
           setHabitosRecebidos(response.data);
+          //Atualiza os habitos do DIA (tela hoje)
+          const promiseListarHabitos = axios.get(
+            "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
+            config
+          );
+          promiseListarHabitos.then((response) => {
+            setHabitosHoje(response.data);
+          });
+          //Devolve erro caso nao consiga atualizar os habitos do dia
+          promiseListarHabitos.catch((err) => {
+            console.log(err.response);
+          });
         });
         promiseAtualiza.catch((err) => {
           alert("Ops, parece que algo deu errado!");

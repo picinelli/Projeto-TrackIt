@@ -3,13 +3,15 @@ import { useState, useContext } from "react";
 import styled from "styled-components";
 import TokenContext from "../../contexts/TokenContext";
 import HabitosRecebidosContext from "../../contexts/HabitosRecebidosContext";
+import HabitosHoje from "../../contexts/HabitosHoje"
 import axios from "axios";
 
 import "../../assets/css/style.css";
 
 export default function Input(props) {
   const { visivel, setVisivel, setHabito, habito } = props;
-  const {setHabitosRecebidos} = useContext(HabitosRecebidosContext);
+  const {setHabitosHoje} = useContext(HabitosHoje)
+  const { setHabitosRecebidos } = useContext(HabitosRecebidosContext);
   const [clicado, setClicado] = useState(false);
   const { token } = useContext(TokenContext);
   const [loading, setLoading] = useState(false);
@@ -90,7 +92,14 @@ export default function Input(props) {
         </button>
       </div>
       <Salvar>
-        <p disabled={loading} onClick={() => {setVisivel(!visivel)}}>Cancelar</p>
+        <p
+          disabled={loading}
+          onClick={() => {
+            setVisivel(!visivel);
+          }}
+        >
+          Cancelar
+        </p>
         <Botao />
       </Salvar>
     </Container>
@@ -127,22 +136,35 @@ export default function Input(props) {
         )
         //Recarrega a lista de habitos caso o habito seja enviado com sucesso
         .then((response) => {
-          setHabito({name: "", days: []})
-          setVisivel(!visivel)
+          setHabito({ name: "", days: [] });
+          setVisivel(!visivel);
           setLoading(false);
           setHabitosRecebidos(response.data);
+          //Atualiza os habitos do DIA (tela hoje)
+          const promiseListarHabitos = axios.get(
+            "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
+            config
+          );
+          promiseListarHabitos.then((response) => {
+            setHabitosHoje(response.data);
+          });
+          //Devolve erro caso nao consiga atualizar os habitos do dia
+          promiseListarHabitos.catch((err) => {
+            console.log(err.response);
+          });
         })
-        .catch((err) =>{
+        //Devolve erro caso n'ao consiga recarregar lista de habitos total
+        .catch((err) => {
           setLoading(false);
-          alert(`Ops, parece que algo deu errado!`)
-          console.log(err.response)
-        })
-    })
+          alert(`Ops, parece que algo deu errado!`);
+          console.log(err.response);
+        });
+    });
     //Retorna alert caso o post falhe
     promise.catch((err) => {
       setLoading(false);
-      alert(`Ops, parece que algo deu errado!`)
-    })
+      alert(`Ops, parece que algo deu errado!`);
+    });
   }
 
   function verificarClicado(e) {
