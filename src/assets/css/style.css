@@ -7,6 +7,9 @@ body {
   background-color: #f2f2f2;
 }
 
+.opacidade {
+  background-color: rgba(0,0,0,.5);
+}
 /*
 font-family: 'Lexend Deca', sans-serif;
 font-family: 'Playball', cursive;
