@@ -27,24 +27,26 @@ export default function Hoje() {
         Authorization: `Bearer ${token.token}`,
       },
     };
-    const promise = axios.get(
-      "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
-      config
-    );
-    promise.then((response) => {
-      setHabitosHoje(response.data);
-    });
-    promise.catch((err) => {
-      console.log(err.response);
-    });
+    if(token.token !== undefined) {
+      const promise = axios.get(
+        "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
+        config
+      );
+      promise.then((response) => {
+        setHabitosHoje(response.data);
+      });
+      promise.catch((err) => {
+        console.log(err.response);
+      });
 
-    const promiseHistorico = axios.get(
-      "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
-      config
-    );
-    promiseHistorico.then((response) => {
-      setHabitosRecebidos(response.data);
-    });
+      const promiseHistorico = axios.get(
+        "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
+        config
+      );
+      promiseHistorico.then((response) => {
+        setHabitosRecebidos(response.data);
+      });
+    }
   }, [token.token, setHabitosHoje, setHabitosRecebidos]);
 
   return (

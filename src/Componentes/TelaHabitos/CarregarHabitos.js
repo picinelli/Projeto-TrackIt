@@ -57,7 +57,6 @@ export default function CarregarHabitos(props) {
         config
       );
       promiseDeleta.then((response) => {
-        console.log(habitosRecebidos)
         const promiseAtualiza = axios.get(
           "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
           config

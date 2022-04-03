@@ -44,18 +44,20 @@ export default function TelaHabitos() {
         Authorization: `Bearer ${token.token}`,
       },
     };
-    const promiseListarHabitos = axios.get(
-      "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
-      config
-    );
-    promiseListarHabitos.then((response) => {
-      setHabitosHoje(response.data);
-    });
-    
-    //Devolve erro caso nao consiga atualizar os habitos do dia
-    promiseListarHabitos.catch((err) => {
-      console.log(err.response);
-    });
+    if(token.token !== undefined) {
+      const promiseListarHabitos = axios.get(
+        "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
+        config
+      );
+      promiseListarHabitos.then((response) => {
+        setHabitosHoje(response.data);
+      });
+      
+      //Devolve erro caso nao consiga atualizar os habitos do dia
+      promiseListarHabitos.catch((err) => {
+        console.log(err.response);
+      });
+    }
   }, [setHabitosHoje, token.token])
 
   return (
