@@ -1,19 +1,20 @@
-import {useState, useEffect, useContext} from 'react'
-import Calendar from 'react-calendar'
-import styled from 'styled-components'
-import axios from 'axios'
-import dayjs from 'dayjs'
+import { useState, useEffect, useContext } from "react";
+import Calendar from "react-calendar";
+import styled from "styled-components";
+import axios from "axios";
+import dayjs from "dayjs";
 import HabitosHoje from "../../contexts/HabitosHoje";
 import HabitosRecebidosContext from "../../contexts/HabitosRecebidosContext";
-import TokenContext from "../../contexts/TokenContext"
+import TokenContext from "../../contexts/TokenContext";
 
-import 'react-calendar/dist/Calendar.css'
+import "react-calendar/dist/Calendar.css";
 
 export default function Historico() {
-  const [diasConcluidos, setDiasConcluidos] = useState([])
-  const {token} = useContext(TokenContext)
-  const {setHabitosHoje} = useContext(HabitosHoje)
-  const {setHabitosRecebidos} = useContext(HabitosRecebidosContext);
+  const [diasConcluidos, setDiasConcluidos] = useState([]);
+  const { token } = useContext(TokenContext);
+  const { setHabitosHoje } = useContext(HabitosHoje);
+  const { setHabitosRecebidos } = useContext(HabitosRecebidosContext);
+  const [diaCalendarioSelecionado, setDiaCalendarioSelecionado] = useState({});
 
   useEffect(() => {
     const config = {
@@ -21,14 +22,17 @@ export default function Historico() {
         Authorization: `Bearer ${token.token}`,
       },
     };
-    if(token.token !== undefined) {
-      const promiseDiasConcluidos = axios.get('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/history/daily', config)
+    if (token.token !== undefined) {
+      const promiseDiasConcluidos = axios.get(
+        "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/history/daily",
+        config
+      );
       promiseDiasConcluidos.then((response) => {
-        setDiasConcluidos(response.data)
-      })
-      promiseDiasConcluidos.catch((err) => console.log(err.response))
+        setDiasConcluidos(response.data);
+      });
+      promiseDiasConcluidos.catch((err) => console.log(err.response));
     }
-  }, [token.token])
+  }, [token.token]);
 
   //Atualizar o Progresso e a Tela de Criacao de Habitos ao dar f5 na pagina
   useEffect(() => {
@@ -37,7 +41,7 @@ export default function Historico() {
         Authorization: `Bearer ${token.token}`,
       },
     };
-    if(token.token !== undefined) {
+    if (token.token !== undefined) {
       //Atualizar o Progresso
       const promiseListarHabitos = axios.get(
         "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
@@ -46,7 +50,7 @@ export default function Historico() {
       promiseListarHabitos.then((response) => {
         setHabitosHoje(response.data);
       });
-      
+
       //Devolve erro caso nao consiga atualizar os habitos do dia
       promiseListarHabitos.catch((err) => {
         console.log(err.response);
@@ -61,32 +65,79 @@ export default function Historico() {
         setHabitosRecebidos(response.data);
       });
     }
-  }, [setHabitosHoje, token.token, setHabitosRecebidos])
+  }, [setHabitosHoje, token.token, setHabitosRecebidos]);
+
 
   return (
     <Fundo>
       <Container>
         <Titulo>Histórico</Titulo>
-        <Calendar locale="pt-br" calendarType="US" tileClassName={({ date }) => alterarFundo(date)}/>
+        <Calendar
+          locale="pt-br"
+          calendarType="US"
+          tileClassName={({ date }) => alterarFundo(date)}
+          onClickDay={(date) => {
+            buscarHabitosHistorico(date);
+          }}
+        />
+      </Container>
+      <Container>
+        <DiaEscolhido>{diaCalendarioSelecionado.day}</DiaEscolhido>
+        <ContainerHistorico />
       </Container>
     </Fundo>
-  )
+  );
+
+  function buscarHabitosHistorico(date) {
+    const dia = dayjs(date).format("DD/MM/YYYY");
+    let achouDia = false
+
+    diasConcluidos.forEach((e) => {
+      if (e.day === dia) {
+        achouDia = true
+        return setDiaCalendarioSelecionado(e);
+      }
+    });
+
+    if(achouDia === false) {
+      return setDiaCalendarioSelecionado({})
+    }
+  }
+
+  function ContainerHistorico() {
+    if(diaCalendarioSelecionado.day === undefined) {
+      return <></>
+    }
+    return (
+    <ContainerBranco>
+      {diaCalendarioSelecionado.habits.map((habito) => {
+        if (habito.done) {
+          return <p key={habito.name} className="completado">{habito.name}</p>
+        }
+        return <p key={habito.name} className="nao-completado">{habito.name}</p>
+      })}
+    </ContainerBranco>
+    )
+  }
 
   function alterarFundo(date) {
-    const dia = dayjs(date).format('DD/MM/YYYY');
-    let habitosDoDia = null
+    const dia = dayjs(date).format("DD/MM/YYYY");
+    let habitosDoDia = null;
 
-    diasConcluidos.forEach(e => {
+    diasConcluidos.forEach((e) => {
       if (e.day === dia) {
-          habitosDoDia = e.habits;
+        habitosDoDia = e.habits;
       }
-  })
+    });
 
     if (habitosDoDia) {
-      if ((habitosDoDia.filter(e => e.done).length) / habitosDoDia.length === 1.0) {
-          return "verde"
+      if (
+        habitosDoDia.filter((e) => e.done).length / habitosDoDia.length ===
+        1.0
+      ) {
+        return "verde";
       } else {
-          return "vermelho"
+        return "vermelho";
       }
     }
   }
@@ -96,19 +147,29 @@ const Fundo = styled.main`
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-`
+  align-items: center;
+`;
 
 const Container = styled.div`
   max-width: 340px;
   width: 100%;
 
   .verde {
-    background-color: #8CC653;
+    background-color: #8cc653;
   }
 
   .vermelho {
-    background-color: #E95766;
+    background-color: #e95766;
+  }
+
+  .completado {
+    color: #8cc653
+  }
+
+  .nao-completado {
+    color: #e95766
   }
 
   .react-calendar {
@@ -120,7 +181,7 @@ const Container = styled.div`
     max-width: 100%;
     text-align: center;
     height: 48px;
-    border-radius: 50%
+    border-radius: 50%;
   }
 
   .react-calendar__tile--now {
@@ -134,4 +195,28 @@ const Titulo = styled.div`
   font-size: 23px;
   color: #126ba5;
   margin-bottom: 20px;
+`;
+
+const DiaEscolhido = styled.div`
+  padding-top: 20px;
+  font-family: "Lexend Deca";
+  font-size: 23px;
+  color: #126ba5;
+  margin-bottom: 20px;
+`;
+
+const ContainerBranco = styled.div`
+  padding: 15px 15px 15px 15px;
+  margin-bottom: 15px;
+  max-width: 340px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 5px;
+  font-family: "Lexend Deca";
+  font-size: 20px;
+
+  p {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
 `;
