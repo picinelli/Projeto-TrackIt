@@ -19,8 +19,6 @@ export default function CarregarHabitoHoje(props) {
   };
   const [loading, setLoading] = useState(false);
 
-  console.log(habito)
-
   return (
     <ContainerHabito key={id}>
       <h1>{name}</h1>

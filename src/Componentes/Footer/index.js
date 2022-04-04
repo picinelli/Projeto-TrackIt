@@ -41,6 +41,7 @@ export default function Footer() {
                 textColor: "#fff",
                 pathColor: "#fff",
                 trailColor: "transparent",
+                fontFamily: 'Lexend Deca',
               })}
               backgroundPadding={6}
             />

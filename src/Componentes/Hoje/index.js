@@ -20,6 +20,8 @@ export default function Hoje() {
     }
   }
   const porcentagem = habitosCompletos / habitosHoje.length;
+  let date = dayjs().locale("pt-br").format("dddd, DD/MM");
+  const dateFixed = date.charAt(0).toUpperCase() + date.slice(1)
 
   useEffect(() => {
     const config = {
@@ -54,8 +56,7 @@ export default function Hoje() {
       <Fundo>
         <Container>
           <Data>
-            {dayjs().locale("pt-br").format("dddd")},{" "}
-            {dayjs().locale("pt-br").format("DD/MM")}
+            {dateFixed}
           </Data>
           <ProgressoTexto>
             <HabitoTexto />

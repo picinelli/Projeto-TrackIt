@@ -10,6 +10,10 @@ body {
 .opacidade {
   opacity: 0.5;
 }
+
+.root {
+  font-family: 'Lexend Deca', sans-serif;
+}
 /*
 font-family: 'Lexend Deca', sans-serif;
 font-family: 'Playball', cursive;
