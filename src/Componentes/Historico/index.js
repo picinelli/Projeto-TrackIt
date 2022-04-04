@@ -76,6 +76,7 @@ export default function Historico() {
           locale="pt-br"
           calendarType="US"
           tileClassName={({ date }) => alterarFundo(date)}
+          formatDay={(locate, date) => dayjs(date).format("DD")}
           onClickDay={(date) => {
             buscarHabitosHistorico(date);
           }}
@@ -150,18 +151,48 @@ const Fundo = styled.main`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  .react-calendar__tile--active:enabled:hover, .react-calendar__tile--active:enabled:focus {
+    background: #52B6FF;
+  }
+
+  .react-calendar__tile--hasActive {
+  background: #52B6FF;
+}
+
+  .react-calendar__tile--active {
+  background: #52B6FF;
+  color: white;
+  }
+  
 `;
 
 const Container = styled.div`
   max-width: 340px;
   width: 100%;
 
-  .verde {
-    background-color: #8cc653;
+  .react-calendar {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    box-sizing: content;
+
+    abbr {
+      width: 32px;
+      height: 32px;
+    }
   }
 
-  .vermelho {
+  .verde abbr {
+    background-color: #8cc653;
+    padding: 9px;
+    border-radius: 50%;
+  }
+
+  .vermelho abbr {
     background-color: #e95766;
+    padding: 9px;
+    border-radius: 50%;
   }
 
   .completado {
@@ -170,22 +201,6 @@ const Container = styled.div`
 
   .nao-completado {
     color: #e95766
-  }
-
-  .react-calendar {
-    border: 0;
-    border-radius: 10px;
-  }
-
-  .react-calendar__tile {
-    max-width: 100%;
-    text-align: center;
-    height: 48px;
-    border-radius: 50%;
-  }
-
-  .react-calendar__tile--now {
-    background: #ffff76;
   }
 `;
 
