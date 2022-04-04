@@ -38,7 +38,7 @@ export default function CarregarHabitoHoje(props) {
     } else if (loading === true) {
       return (
         <ContainerIcone className={done ? "marcado" : "desmarcado"}>
-          <ThreeDots color="#FFFFFF" />
+          <ThreeDots width={50} heightcolor="#FFFFFF" />
         </ContainerIcone>
       )
     }
