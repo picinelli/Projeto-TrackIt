@@ -46,7 +46,9 @@ export default function Footer() {
             />
           </Progresso>
         </Link>
-        <p>Historico</p>
+        <Link to={'/historico'}>
+          <p>Historico</p>
+        </Link>
       </Container>
     </Espacamento>
   );
@@ -55,8 +57,8 @@ export default function Footer() {
 const Container = styled.footer`
   display: flex;
   justify-content: space-between;
-  padding-left: 15%;
-  padding-right: 15%;
+  padding-left: 10%;
+  padding-right: 10%;
   align-items: center;
   width: 100%;
   height: 70px;

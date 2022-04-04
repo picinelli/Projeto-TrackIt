@@ -31,7 +31,6 @@ export default function Login() {
       setLoading(false)
       navigate('/hoje')
       setToken(response.data)
-      console.log(token)
     });
     promise.catch((err) => {
       setLoading(false)

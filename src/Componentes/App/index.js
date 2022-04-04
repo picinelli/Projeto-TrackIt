@@ -13,6 +13,7 @@ import Hoje from '../Hoje'
 import TokenContext from "../../contexts/TokenContext";
 import HabitosRecebidosContext from "../../contexts/HabitosRecebidosContext"
 import HabitosHoje from '../../contexts/HabitosHoje'
+import Historico from '../Historico'
 
 export default function App() {
   const [token, setToken] = useState("");
@@ -41,6 +42,7 @@ export default function App() {
                 <Route path="/cadastro" element={<Cadastro />} />
                 <Route path="/habitos" element={<TelaHabitos />} />
                 <Route path="/hoje" element={<Hoje />} />
+                <Route path="/historico" element={<Historico />} />
               </Routes>
               <Footer />
             </HabitosHoje.Provider>

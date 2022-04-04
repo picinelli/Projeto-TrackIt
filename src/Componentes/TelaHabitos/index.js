@@ -37,7 +37,7 @@ export default function TelaHabitos() {
     }
   }, [token.token, setHabitosRecebidos]);
 
-  //Atualizar o Footer ao dar f5 na pagina (Está dando erro de token, mas está atualizando)
+  //Atualizar o Footer ao dar f5 na pagina
   useEffect(() => {
     const config = {
       headers: {

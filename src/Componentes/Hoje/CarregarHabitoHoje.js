@@ -23,7 +23,7 @@ export default function CarregarHabitoHoje(props) {
     <ContainerHabito key={id}>
       <h1>{name}</h1>
       <p>Sequência atual: <span className={done ? "verdinho" : ""}>{currentSequence} dias</span></p>
-      <p>Seu recorde: <span className={currentSequence === highestSequence  ? "verdinho" : ""}>{highestSequence} dias</span></p>
+      <p>Seu recorde: <span className={currentSequence === highestSequence ? "verdinho" : ""}>{highestSequence} dias</span></p>
       <Checkbox />
     </ContainerHabito>
   )
