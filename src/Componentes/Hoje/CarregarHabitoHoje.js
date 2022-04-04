@@ -61,10 +61,14 @@ export default function CarregarHabitoHoje(props) {
         promiseListarHabitos.catch((err) => {
           setLoading(false)
           console.log(err.response);
+          alert('Ops, parece que algo deu errado!')
         });
       }
       )
-      promiseCumprir.catch(err => console.log(err.response))
+      promiseCumprir.catch(err => {
+        console.log(err.response)
+        alert('Ops, parece que algo deu errado!')
+      })
     }
     // se o habito estiver marcado, enviar como desmarcado para API e recarregar lista de habitos
     else {
