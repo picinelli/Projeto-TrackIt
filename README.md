@@ -68,7 +68,7 @@
 - Tela Histórico (rota `/historico`)
     - [x]  Deve ser exibido o texto conforme layout
 
-# Bônus (opcional)
+## Bônus (opcional)
 
 - Persistência de login
     - [x]  Após o login, salve o objeto do usuário na máquina utilizando **Local Storage**  
