@@ -18,6 +18,8 @@
 
 <!-- ABOUT THE PROJECT -->
 
+![Banner](https://github.com/picinelli/Projeto-TrackIt/blob/main/src/assets/images/TrackIt-Banner.png)
+
 ## Requisitos
 
 - Geral
